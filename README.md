@@ -18,7 +18,7 @@ import (
 )
 
 func main() {
-	genderizations, err := genderizer.Genderize(os.Args[1:]...)
+	genderizations, err := genderizer.Genderize("", os.Args[1:]...)
 
 	if err != nil {
 		panic(err)

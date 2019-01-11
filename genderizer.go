@@ -19,7 +19,7 @@ type Genderization struct {
 	Count       uint64  `json:"count"`
 }
 
-func Genderize(names ...string) ([]*Genderization, error) {
+func Genderize(key string, names ...string) ([]*Genderization, error) {
 	if len(names) == 0 {
 		return nil, errors.New("Must provide at least one name.")
 	}
@@ -45,6 +45,10 @@ func Genderize(names ...string) ([]*Genderization, error) {
 	}
 
 	query := request.URL.Query()
+
+	if key != "" {
+		query.Add("apikey", key)
+	}
 
 	for index, name := range names {
 		query.Add(fmt.Sprintf("name[%d]", index), name)
