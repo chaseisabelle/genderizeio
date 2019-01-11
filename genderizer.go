@@ -72,20 +72,14 @@ func Genderize(names ...string) ([]*Genderization, error) {
 		return nil, err
 	}
 
-	var failure map[string]interface{}
+	var failure struct{
+		error string `json:"error,omitempty"`
+	}
 
 	err = json.Unmarshal(body, &failure)
 
-	if err == nil {
-		error, ok := failure["error"].(string)
-
-		if ok {
-			if error == "" {
-				error = fmt.Sprintf("Failed to parse error: %+v", failure)
-			}
-
-			return nil, errors.New(error)
-		}
+	if err == nil && failure.error != "" {
+		return nil, errors.New(failure.error)
 	}
 
 	var results []*Genderization
