@@ -12,14 +12,14 @@ import (
 var endpoint string
 var client = &http.Client{}
 
-type Gender struct {
+type Genderization struct {
 	Name        string  `json:"name"`
 	Gender      string  `json:"gender"`
 	Probability float64 `json:"probability"`
 	Count       uint64  `json:"count"`
 }
 
-func Genderize(names ...string) ([]*Gender, error) {
+func Genderize(names ...string) ([]*Genderization, error) {
 	if len(names) == 0 {
 		return nil, errors.New("Must provide at least one name.")
 	}
@@ -88,7 +88,7 @@ func Genderize(names ...string) ([]*Gender, error) {
 		}
 	}
 
-	var results []*Gender
+	var results []*Genderization
 
 	err = json.Unmarshal(body, &results)
 

@@ -19,7 +19,7 @@ func TestGenderize_success_singleName(t *testing.T) {
 
 	endpoint = server.URL
 
-	genders, err := Genderize("chase")
+	genderizations, err := Genderize("chase")
 
 	if err != nil {
 		t.Error(err)
@@ -27,7 +27,7 @@ func TestGenderize_success_singleName(t *testing.T) {
 		return
 	}
 
-	count := len(genders)
+	count := len(genderizations)
 
 	if count != 1 {
 		t.Errorf("Expected 1, but got %+v.", count)
@@ -47,7 +47,7 @@ func TestGenderize_success_multipleNames(t *testing.T) {
 
 	endpoint = server.URL
 
-	genders, err := Genderize("chase", "isabelle")
+	genderizations, err := Genderize("chase", "isabelle")
 
 	if err != nil {
 		t.Error(err)
@@ -55,7 +55,7 @@ func TestGenderize_success_multipleNames(t *testing.T) {
 		return
 	}
 
-	count := len(genders)
+	count := len(genderizations)
 
 	if count != 2 {
 		t.Errorf("Expected 2, but got %+v.", count)
@@ -71,13 +71,13 @@ func TestGenderize_failure_noNames(t *testing.T) {
 
 	endpoint = server.URL
 
-	genders, err := Genderize()
+	genderizations, err := Genderize()
 
 	if err == nil {
 		t.Errorf("Expected error.")
 	}
 
-	if genders != nil {
+	if genderizations != nil {
 		t.Errorf("Expected nil.")
 	}
 }
@@ -91,13 +91,13 @@ func TestGenderize_failure_emptyName(t *testing.T) {
 
 	endpoint = server.URL
 
-	genders, err := Genderize("chase", "")
+	genderizations, err := Genderize("chase", "")
 
 	if err == nil {
 		t.Errorf("Expected error.")
 	}
 
-	if genders != nil {
+	if genderizations != nil {
 		t.Errorf("Expected nil.")
 	}
 }
@@ -115,13 +115,13 @@ func TestGenderize_failure_error(t *testing.T) {
 
 	endpoint = server.URL
 
-	genders, err := Genderize("chase", "isabelle")
+	genderizations, err := Genderize("chase", "isabelle")
 
 	if err == nil {
 		t.Error("Expected error.")
 	}
 
-	if genders != nil {
+	if genderizations != nil {
 		t.Error("Expected nil.")
 	}
 }
