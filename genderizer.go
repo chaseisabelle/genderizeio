@@ -77,7 +77,7 @@ func Genderize(key string, names ...string) ([]*Genderization, error) {
 	}
 
 	var failure struct{
-		error string `json:"error,omitempty"`
+		error string
 	}
 
 	err = json.Unmarshal(body, &failure)
