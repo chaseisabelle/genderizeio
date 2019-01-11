@@ -1,1 +1,0 @@
-# genderize.io golang package
