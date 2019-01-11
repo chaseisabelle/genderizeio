@@ -15,11 +15,11 @@ func main() {
 
 	fmt.Println("genderizations:")
 
-	for _, gender := range genderizations {
+	for _, genderization := range genderizations {
 		fmt.Println()
-		fmt.Println(fmt.Sprintf("\tname: %s", gender.Name))
-		fmt.Println(fmt.Sprintf("\tgender: %s", gender.Gender))
-		fmt.Println(fmt.Sprintf("\tprobability: %f", gender.Probability))
-		fmt.Println(fmt.Sprintf("\tcount: %d", gender.Count))
+		fmt.Println(fmt.Sprintf("\tname: %s", genderization.Name))
+		fmt.Println(fmt.Sprintf("\tgender: %s", genderization.Gender))
+		fmt.Println(fmt.Sprintf("\tprobability: %f", genderization.Probability))
+		fmt.Println(fmt.Sprintf("\tcount: %d", genderization.Count))
 	}
 }
