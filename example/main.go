@@ -7,15 +7,15 @@ import (
 )
 
 func main() {
-	genders, err := genderizer.Genderize(os.Args[1:]...)
+	genderizations, err := genderizer.Genderize(os.Args[1:]...)
 
 	if err != nil {
 		panic(err)
 	}
 
-	fmt.Println("genders:")
+	fmt.Println("genderizations:")
 
-	for _, gender := range genders {
+	for _, gender := range genderizations {
 		fmt.Println()
 		fmt.Println(fmt.Sprintf("\tname: %s", gender.Name))
 		fmt.Println(fmt.Sprintf("\tgender: %s", gender.Gender))
