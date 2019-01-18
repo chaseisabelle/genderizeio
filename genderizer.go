@@ -9,7 +9,7 @@ import (
 	"strings"
 )
 
-var endpoint string
+var endpoint = "https://api.genderize.io"
 var client = &http.Client{}
 
 type Genderization struct {
@@ -20,10 +20,12 @@ type Genderization struct {
 }
 
 func Genderize(key string, names ...string) ([]*Genderization, error) {
+	// do we have any input?
 	if len(names) == 0 {
 		return nil, errors.New("Must provide at least one name.")
 	}
 
+	// check/prep input
 	for index, name := range names {
 		name = strings.TrimSpace(name)
 
@@ -34,16 +36,14 @@ func Genderize(key string, names ...string) ([]*Genderization, error) {
 		names[index] = name
 	}
 
-	if endpoint == "" {
-		endpoint = "https://api.genderize.io"
-	}
-
+	// build the request
 	request, err := http.NewRequest("GET", endpoint, nil)
 
 	if err != nil {
 		return nil, err
 	}
 
+	// build the query params
 	query := request.URL.Query()
 
 	if key != "" {
@@ -60,6 +60,7 @@ func Genderize(key string, names ...string) ([]*Genderization, error) {
 		client = &http.Client{}
 	}
 
+	// execute the request
 	response, err := client.Do(request)
 
 	if response != nil {
@@ -70,29 +71,99 @@ func Genderize(key string, names ...string) ([]*Genderization, error) {
 		return nil, err
 	}
 
+	// load the response body
 	body, err := ioutil.ReadAll(response.Body)
 
 	if err != nil {
 		return nil, err
 	}
 
-	var failure struct{
-		error string
+	// parse the response body
+	var payload interface{}
+
+	err = json.Unmarshal(body, &payload)
+
+	// check the response payload for error before checking status code
+	// the payload will have a more detailed error message
+	if err == nil {
+		failure, ok := payload.(map[string]string)
+
+		if ok {
+			error, ok := failure["error"]
+
+			if ok {
+				return nil, errors.New(error)
+			}
+		}
 	}
 
-	err = json.Unmarshal(body, &failure)
-
-	if err == nil && failure.error != "" {
-		return nil, errors.New(failure.error)
+	// if the payload does not have error message then check status code
+	if response.StatusCode != http.StatusOK {
+		return nil, fmt.Errorf("%+v", http.StatusText(response.StatusCode))
 	}
 
-	var results []*Genderization
-
-	err = json.Unmarshal(body, &results)
-
+	// the payload failed to parse, return error
 	if err != nil {
 		return nil, err
 	}
 
-	return results, nil
+	// parse results from the payload
+	results, ok := payload.([]interface{})
+
+	if !ok {
+		return nil, errors.Errorf("Malformed payload: %+v", results)
+	}
+
+	var genderizations []*Genderization
+
+	for _, result := range results {
+		mapped := result.(map[string]interface{})
+		genderization := &Genderization{}
+
+		value, ok := mapped["name"]
+
+		if ok {
+			name, ok := value.(string)
+
+			if ok {
+				genderization.Name = name
+			}
+		}
+
+		value, ok = mapped["gender"]
+
+		if ok {
+			gender, ok := value.(string)
+
+			if ok {
+				genderization.Gender = gender
+			}
+		}
+
+		value, ok = mapped["probability"]
+
+		if ok {
+			probability, ok := value.(float64)
+
+			if ok {
+				genderization.Probability = probability
+			}
+		}
+
+		value, ok = mapped["count"]
+
+		if ok {
+			// why cant i just do value.(uint64) ?
+			count, ok := value.(float64)
+
+			if ok {
+				genderization.Count = uint64(count)
+			}
+		}
+
+		genderizations = append(genderizations, genderization)
+	}
+
+	// and thats how you do the hokey pokey
+	return genderizations, nil
 }
