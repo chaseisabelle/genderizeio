@@ -111,7 +111,7 @@ func Genderize(key string, names ...string) ([]*Genderization, error) {
 	results, ok := payload.([]interface{})
 
 	if !ok {
-		return nil, errors.Errorf("Malformed payload: %+v", results)
+		return nil, errors.Errorf("Malformed payload: %+v", payload)
 	}
 
 	var genderizations []*Genderization
