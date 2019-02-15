@@ -24,6 +24,14 @@ type Genderizer struct {
 	Key      string
 }
 
+func New() *Genderizer {
+	return &Genderizer{
+		Client:   &http.Client{},
+		Endpoint: ENDPOINT,
+		Key:      "",
+	}
+}
+
 func (genderizer *Genderizer) Genderize(names ...string) ([]*Genderization, error) {
 	// do we have any input?
 	if len(names) == 0 {

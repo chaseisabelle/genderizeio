@@ -7,11 +7,11 @@ import (
 )
 
 func genderizer(endpoint string) *Genderizer {
-	return &Genderizer{
-		Client:   &http.Client{},
-		Endpoint: endpoint,
-		Key:      "",
-	}
+	genderizer := New()
+
+	genderizer.Endpoint = endpoint
+
+	return genderizer
 }
 
 func TestGenderize_success_singleName(t *testing.T) {
