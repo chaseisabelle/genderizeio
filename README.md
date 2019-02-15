@@ -18,7 +18,7 @@ import (
 )
 
 func main() {
-	genderizations, err := genderizer.Genderize("", os.Args[1:]...)
+	genderizations, err := genderizer.New().Genderize(os.Args[1:]...)
 
 	if err != nil {
 		panic(err)
@@ -34,6 +34,7 @@ func main() {
 		fmt.Println(fmt.Sprintf("\tcount: %d", genderization.Count))
 	}
 }
+
 ```
 *running the example...*
 ```
