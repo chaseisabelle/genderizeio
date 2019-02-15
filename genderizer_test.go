@@ -6,6 +6,14 @@ import (
 	"testing"
 )
 
+func genderizer(endpoint string) *Genderizer {
+	return &Genderizer{
+		Client:   &http.Client{},
+		Endpoint: endpoint,
+		Key:      "",
+	}
+}
+
 func TestGenderize_success_singleName(t *testing.T) {
 	server := httptest.NewServer(http.HandlerFunc(func(response http.ResponseWriter, request *http.Request) {
 		response.WriteHeader(http.StatusOK)
@@ -15,9 +23,7 @@ func TestGenderize_success_singleName(t *testing.T) {
 
 	defer server.Close()
 
-	endpoint = server.URL
-
-	genderizations, err := Genderize("", "chase")
+	genderizations, err := genderizer(server.URL).Genderize("chase")
 
 	if err != nil {
 		t.Error(err)
@@ -41,9 +47,7 @@ func TestGenderize_success_multipleNames(t *testing.T) {
 
 	defer server.Close()
 
-	endpoint = server.URL
-
-	genderizations, err := Genderize("", "chase", "isabelle")
+	genderizations, err := genderizer(server.URL).Genderize("chase", "isabelle")
 
 	if err != nil {
 		t.Error(err)
@@ -67,9 +71,7 @@ func TestGenderize_success_stupidName(t *testing.T) {
 
 	defer server.Close()
 
-	endpoint = server.URL
-
-	genderizations, err := Genderize("", "ThisIsNotAName")
+	genderizations, err := genderizer(server.URL).Genderize("this is not a name")
 
 	if err != nil {
 		t.Error(err)
@@ -109,9 +111,7 @@ func TestGenderize_failure_noNames(t *testing.T) {
 
 	defer server.Close()
 
-	endpoint = server.URL
-
-	genderizations, err := Genderize("")
+	genderizations, err := genderizer(server.URL).Genderize()
 
 	if err == nil {
 		t.Errorf("Expected error.")
@@ -129,9 +129,7 @@ func TestGenderize_failure_emptyName(t *testing.T) {
 
 	defer server.Close()
 
-	endpoint = server.URL
-
-	genderizations, err := Genderize("", "chase", "")
+	genderizations, err := genderizer(server.URL).Genderize("chase", "")
 
 	if err == nil {
 		t.Errorf("Expected error.")
@@ -151,9 +149,7 @@ func TestGenderize_failure_apiError(t *testing.T) {
 
 	defer server.Close()
 
-	endpoint = server.URL
-
-	genderizations, err := Genderize("", "chase", "isabelle")
+	genderizations, err := genderizer(server.URL).Genderize("chase", "isabelle")
 
 	if err == nil {
 		t.Error("Expected error.")
@@ -172,9 +168,7 @@ func TestGenderize_failure_serverError(t *testing.T) {
 
 	defer server.Close()
 
-	endpoint = server.URL
-
-	genderizations, err := Genderize("", "chase")
+	genderizations, err := genderizer(server.URL).Genderize("chase")
 
 	if err == nil {
 		t.Errorf("Expected error, but got %+v.", genderizations)

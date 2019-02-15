@@ -3,11 +3,15 @@ package main
 import (
 	"fmt"
 	"github.com/chaseisabelle/genderizer"
+	"net/http"
 	"os"
 )
 
 func main() {
-	genderizations, err := genderizer.Genderize("", os.Args[1:]...)
+	genderizations, err := (&genderizer.Genderizer{
+		Client: &http.Client{},
+		Endpoint: genderizer.ENDPOINT,
+	}).Genderize(os.Args[1:]...)
 
 	if err != nil {
 		panic(err)

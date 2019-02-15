@@ -9,8 +9,7 @@ import (
 	"strings"
 )
 
-var endpoint = "https://api.genderize.io"
-var client = &http.Client{}
+const ENDPOINT = "https://api.genderize.io"
 
 type Genderization struct {
 	Name        string  `json:"name"`
@@ -19,7 +18,13 @@ type Genderization struct {
 	Count       uint64  `json:"count"`
 }
 
-func Genderize(key string, names ...string) ([]*Genderization, error) {
+type Genderizer struct {
+	Client   *http.Client
+	Endpoint string
+	Key      string
+}
+
+func (genderizer *Genderizer) Genderize(names ...string) ([]*Genderization, error) {
 	// do we have any input?
 	if len(names) == 0 {
 		return nil, errors.New("Must provide at least one name.")
@@ -37,7 +42,7 @@ func Genderize(key string, names ...string) ([]*Genderization, error) {
 	}
 
 	// build the request
-	request, err := http.NewRequest("GET", endpoint, nil)
+	request, err := http.NewRequest("GET", genderizer.Endpoint, nil)
 
 	if err != nil {
 		return nil, err
@@ -46,8 +51,8 @@ func Genderize(key string, names ...string) ([]*Genderization, error) {
 	// build the query params
 	query := request.URL.Query()
 
-	if key != "" {
-		query.Add("apikey", key)
+	if genderizer.Key != "" {
+		query.Add("apikey", genderizer.Key)
 	}
 
 	for index, name := range names {
@@ -56,12 +61,8 @@ func Genderize(key string, names ...string) ([]*Genderization, error) {
 
 	request.URL.RawQuery = query.Encode()
 
-	if client == nil {
-		client = &http.Client{}
-	}
-
 	// execute the request
-	response, err := client.Do(request)
+	response, err := genderizer.Client.Do(request)
 
 	if response != nil {
 		defer response.Body.Close()
